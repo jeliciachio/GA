@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payroll and Wallet Management</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .wallet-balance {
+            margin-top: 20px;
+        }
+        .transfer-history {
+            margin-top: 20px;
+        }
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="index.html">
+                    <img src="images/logo.png" alt="Wagewise Logo" style="height: 30px;">
+                    Wagewise
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="rewards.html">Rewards & Incentives</a></li>
+                        <li class="nav-item"><a class="nav-link" href="chatbot.html">Chatbot Support</a></li>
+                        <li class="nav-item"><a class="nav-link" href="payroll.html">Payroll Distribution</a></li>
+                        <li class="nav-item"><a class="nav-link" href="wellness.html">Financial Wellness Tools</a></li>
+                    </ul>
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item"><a class="nav-link" href="#" id="logout-link" style="display:none;"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                        <li class="nav-item" id="profile-item" style="display:none;">
+                            <a class="nav-link" href="profile.html" id="profile-link">
+                                <i class="fas fa-user-circle"></i> <span id="profile-name">Profile</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <!-- Wallet Balance Display -->
+        <div id="wallet-balance-display" class="wallet-balance">
+            <h3>Wallet Balance: <span id="wallet-balance-amount">$0.00</span></h3>
+            <button id="update-wallet-from-payroll" class="btn btn-primary">Update Wallet from Payroll</button>
+            <!-- Payroll Transfer Form -->
+            <form id="payroll-transfer-form" class="mt-3">
+                <div class="form-group">
+                    <label for="transfer-category">Transfer Category:</label>
+                    <select id="transfer-category" class="form-control" required>
+                        <option value="Financial">Financial Purposes</option>
+                        <option value="Bills">Bills</option>
+                        <option value="Update">Update Wallet from Payroll</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="payroll-recipient">Recipient:</label>
+                    <input type="text" id="payroll-recipient" name="payroll-recipient" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="payroll-amount">Amount:</label>
+                    <input type="number" id="payroll-amount" name="payroll-amount" class="form-control" required>
+                <button type="submit" class="btn btn-success">Transfer from Payroll</button>
+            </form>
+        </div>
+
+        <!-- Transfer History Display -->
+        <div class="transfer-history mt-5">
+            <h4>Transfer History</h4>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Category</th>
+                        <th>Amount</th>
+                        <th>Recipient</th>
+                    </tr>
+                </thead>
+                <tbody id="transfer-history-table-body">
+                    <!-- Transfer history entries will be appended here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Example JavaScript to show the logout and profile links when a user logs in
+        document.getElementById('logout-link').style.display = 'inline';
+        document.getElementById('profile-item').style.display = 'inline';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const isLoggedIn = sessionStorage.getItem('loggedIn') === 'true';
+            const profileItem = document.getElementById('profile-item');
+            const profileName = document.getElementById('profile-name');
+            const logoutLink = document.getElementById('logout-link');
+        
+            if (isLoggedIn) {
+                const username = localStorage.getItem('username');
+                profileItem.style.display = 'inline';
+                profileName.textContent = username || 'Profile';
+                logoutLink.style.display = 'inline';
+            } else {
+                profileItem.style.display = 'none';
+                logoutLink.style.display = 'none';
+            }
+        });
+        document.getElementById('logout-link').addEventListener('click', function(event) {
+            event.preventDefault();
+            sessionStorage.removeItem('loggedIn');
+            localStorage.removeItem('username');
+            window.location.href = 'login.html';
+            
+        });
+
+        $(document).ready(function() {
+            var transferHistory = [];
+
+            $('#payroll-transfer-form').on('submit', function(e) {
+                e.preventDefault(); // Prevent the default form submission
+
+                var transferCategory = $('#transfer-category').val();
+                var transferAmount = parseFloat($('#payroll-amount').val());
+                var walletBalance = parseFloat($('#wallet-balance-amount').text().replace('$', ''));
+
+                if (transferCategory === "Update") {
+                    walletBalance += transferAmount;
+                } else {
+                    if (transferAmount > walletBalance) {
+                        alert('Insufficient wallet balance.');
+                        return;
+                    }
+                    walletBalance -= transferAmount;
+                }
+
+                $('#wallet-balance-amount').text(`$${walletBalance.toFixed(2)}`);
+
+                var transferDetails = {
+                    category: transferCategory,
+                    amount: transferAmount,
+                    timestamp: new Date().toLocaleString(),
+                    recipient: transferCategory === "Update" ? "Wallet" : "External"
+                };
+
+                transferHistory.push(transferDetails);
+                updateTransferHistoryDisplay();
+
+                $('#payroll-amount').val('');
+            });
+
+            function updateTransferHistoryDisplay() {
+                var historyTableBody = $('#transfer-history-table-body');
+                historyTableBody.empty();
+
+                transferHistory.forEach(function(details) {
+                    var row = `<tr>
+                        <td>${details.timestamp}</td>
+                        <td>${details.category}</td>
+                        <td>$${details.amount.toFixed(2)}</td>
+                        <td>${details.recipient}</td>
+                    </tr>`;
+                    historyTableBody.append(row);
+                });
+            }
+
+            $('#update-wallet-from-payroll').on('click', function() {
+                var payrollAmount = parseFloat(prompt('Enter the payroll amount to transfer to your wallet:'));
+                updateWalletBalance(payrollAmount);
+            });
+
+            function updateWalletBalance(amount) {
+                var walletBalance = parseFloat($('#wallet-balance-amount').text().replace('$', ''));
+                walletBalance += amount;
+                $('#wallet-balance-amount').text(`$${walletBalance.toFixed(2)}`);
+            }
+        });
+    </script>
+</body>
+<footer class="bg-dark text-white text-center py-3">
+    <p>&copy; 2024 Wagewise. All rights reserved.</p>
+</footer>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Wagewise</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<style>
+    footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+    }
+</style> 
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="index.html">
+                    <img src="images/logo.png" alt="Wagewise Logo" style="height: 30px;">
+                    Wagewise
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="rewards.html">Rewards & Incentives</a></li>
+                        <li class="nav-item"><a class="nav-link" href="chatbot.html">Chatbot Support</a></li>
+                        <li class="nav-item"><a class="nav-link" href="payroll.html">Payroll Distribution</a></li>
+                        <li class="nav-item"><a class="nav-link" href="wellness.html">Financial Wellness Tools</a></li>
+                    </ul>
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item"><a class="nav-link" href="profile.html" id="profile-link"><i class="fas fa-user-circle"></i> Profile</a></li>
+                        <li class="nav-item"><a class="nav-link" href="logout.html" id="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main class="container mt-4">
+        <h1>Profile</h1>
+        <form id="profile-form">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" class="form-control" id="username" required>
+            </div>
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" class="form-control" id="name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" class="form-control" id="email" required>
+            </div>
+            <div class="form-group">
+                <label for="birthday">Birthday</label>
+                <input type="date" class="form-control" id="birthday" required>
+            </div>
+            <div class="form-group">
+                <label for="occupation">Occupation</label>
+                <input type="text" class="form-control" id="occupation" required>
+            </div>
+            <div class="form-group">
+                <label for="salary">Salary</label>
+                <input type="text" class="form-control" id="salary" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+    </main>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Ensure the profile link and logout link are shown if the user is logged in
+        document.addEventListener('DOMContentLoaded', function() {
+            const isLoggedIn = sessionStorage.getItem('loggedIn') === 'true';
+            const profileLink = document.getElementById('profile-link');
+            const logoutLink = document.getElementById('logout-link');
+
+            if (isLoggedIn) {
+                profileLink.style.display = 'inline';
+                logoutLink.style.display = 'inline';
+                loadProfileData(); // Load the profile data when the page loads
+            } else {
+                profileLink.style.display = 'none';
+                logoutLink.style.display = 'none';
+            }
+        });
+
+        // Logout event handler
+        document.getElementById('logout-link').addEventListener('click', function(event) {
+            event.preventDefault();
+            sessionStorage.removeItem('loggedIn');
+            localStorage.removeItem('username');
+            window.location.href = 'login.html';
+        });
+
+        // Form submission event handler
+        document.getElementById('profile-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+
+            fetch('/save-profile', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Profile saved successfully!');
+                    updateProfileForm(data.profile);
+                } else {
+                    alert('Error saving profile.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error saving profile.');
+            });
+        });
+
+        // Function to load profile data
+        function loadProfileData() {
+            fetch('/get-profile')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    updateProfileForm(data.profile);
+                } else {
+                    alert('Error loading profile.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error loading profile.');
+            });
+        }
+
+        // Function to update the profile form fields
+        function updateProfileForm(profile) {
+            document.getElementById('username').value = profile.username;
+            document.getElementById('name').value = profile.name;
+            document.getElementById('email').value = profile.email;
+            document.getElementById('birthday').value = profile.birthday;
+            document.getElementById('occupation').value = profile.occupation;
+            document.getElementById('salary').value = profile.salary;
+        }
+    </script>
+</body>
+<footer class="bg-dark text-white text-center py-3">
+    <p>&copy; 2024 Wagewise. All rights reserved.</p>
+</footer>
+</html>

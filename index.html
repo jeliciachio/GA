@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wagewise</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+        }
+    </style> 
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="index.html">
+                    <img src="images/logo.png" alt="Wagewise Logo" style="height: 30px;">
+                    Wagewise
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="rewards.html">Rewards & Incentives</a></li>
+                        <li class="nav-item"><a class="nav-link" href="chatbot.html">Chatbot Support</a></li>
+                        <li class="nav-item"><a class="nav-link" href="payroll.html">Payroll Distribution</a></li>
+                        <li class="nav-item"><a class="nav-link" href="wellness.html">Financial Wellness Tools</a></li>
+                    </ul>
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item" id="profile-item" style="display: none;">
+                            <a class="nav-link" href="profile.html" id="profile-link">
+                                <i class="fas fa-user-circle"></i> <span id="profile-name">Profile</span>
+                            </a>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="#" id="logout-link" style="display: none;"><i class="fas fa-sign-out-alt"></i> Logout</a></li>                        
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+<main class="container mt-4">
+    <h1>Welcome to Wagewise</h1>
+    <p>Your financial wellness journey starts here. Explore our features:</p>
+    <div class="alert alert-info" id="wallet-balance">Wallet Balance: $0</div>
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Rewards & Incentives</h5>
+                    <img src="images/rewards.png" alt="Rewards & Incentives">
+                    <a href="rewards.html" class="btn btn-primary">Explore</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3"> 
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Mental Health Chatbot</h5>
+                    <img src="images/chatbot.png" alt="Mental Health Chatbot">
+                    <a href="chatbot.html" class="btn btn-primary">Explore</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3"> 
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Payroll Distribution</h5>
+                    <img src="images/payroll.png" alt="Payroll Distribution">
+                    <a href="payroll.html" class="btn btn-primary">Explore</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3"> 
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Financial Wellness Tools</h5>
+                    <img src="images/finance.png" alt="Financial Wellness Tools">
+                    <a href="wellness.html" class="btn btn-primary">Explore</a>
+                </div>
+            </div>
+        </div>
+    </div> 
+    </main>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+<script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const isLoggedIn = sessionStorage.getItem('loggedIn') === 'true';
+        const profileItem = document.getElementById('profile-item');
+        const profileName = document.getElementById('profile-name');
+        const logoutLink = document.getElementById('logout-link');
+    
+        if (isLoggedIn) {
+            const username = localStorage.getItem('username');
+            profileItem.style.display = 'inline';
+            profileName.textContent = username || 'Profile';
+            logoutLink.style.display = 'inline';
+        } else {
+            profileItem.style.display = 'none';
+            logoutLink.style.display = 'none';
+        }
+    });
+    
+    document.getElementById('logout-link').addEventListener('click', function(event) {
+        event.preventDefault();
+        sessionStorage.removeItem('loggedIn');
+        localStorage.removeItem('username');
+        window.location.href = 'login.html';
+    });
+    
+</script>
+</body>
+<footer class="bg-dark text-white text-center py-3">
+    <p>&copy; 2024 Wagewise. All rights reserved.</p>
+</footer>
+</html>

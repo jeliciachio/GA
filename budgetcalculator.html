@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Calculator</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css"> <!-- If you have a CSS file -->
+    <style>
+        /* Inline CSS for simplicity */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .calculator-container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        input[type="number"], select, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            opacity: 0.8;
+        }
+        .result, .history {
+            margin-top: 20px;
+        }
+        .chart-container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="index.html">
+                    <img src="images/logo.png" alt="Wagewise Logo" style="height: 30px;">
+                    Wagewise
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="rewards.html">Rewards & Incentives</a></li>
+                        <li class="nav-item"><a class="nav-link" href="chatbot.html">Chatbot Support</a></li>
+                        <li class="nav-item"><a class="nav-link" href="payroll.html">Payroll Distribution</a></li>
+                        <li class="nav-item"><a class="nav-link" href="wellness.html">Financial Wellness Tools</a></li>
+                    </ul>
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item"><a class="nav-link" href="#" id="logout-link" style="display:none;"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                        <li class="nav-item" id="profile-item" style="display:none;">
+                            <a class="nav-link" href="profile.html" id="profile-link">
+                                <i class="fas fa-user-circle"></i> <span id="profile-name">Profile</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <br>
+    <br>
+    <div class="calculator-container">
+        <h2>Budget Calculator</h2>
+        <label for="income">Monthly Income (Before CPF):</label>
+        <input type="number" id="income" placeholder="Enter your income">
+        
+        <label for="expenses">Monthly Expenses:</label>
+        <input type="number" id="expenses" placeholder="Enter your expenses">
+        
+        <button onclick="calculateBudget()">Calculate Budget</button>
+        <br>
+        <br>
+        <br>
+        <h3>Custom Budget Entry</h3>
+        <label for="category">Category:</label>
+        <select id="category">
+            <option value="needs">Needs</option>
+            <option value="wants">Wants</option>
+            <option value="savings">Savings</option>
+        </select>
+        <label for="amount">Amount:</label>
+        <input type="number" id="amount" placeholder="Enter amount">
+        <button onclick="addCustomEntry()">Add Entry</button>
+
+        <div class="back-to-wellness-container" style.margin="centre;"></div>
+        <a href="wellness.html" class="btn btn-primary">Back to Wellness</a>
+        <div id="result" class="result"></div>
+        
+        <div id="customBudgetHistory" class="history"></div>
+        
+        <div class="chart-container">
+            <canvas id="budgetChart"></canvas>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const isLoggedIn = sessionStorage.getItem('loggedIn') === 'true';
+            const profileItem = document.getElementById('profile-item');
+            const profileName = document.getElementById('profile-name');
+            const logoutLink = document.getElementById('logout-link');
+
+            if (isLoggedIn) {
+                const username = localStorage.getItem('username');
+                profileItem.style.display = 'inline';
+                profileName.textContent = username || 'Profile';
+                logoutLink.style.display = 'inline';
+            } else {
+                profileItem.style.display = 'none';
+                logoutLink.style.display = 'none';
+            }
+        });
+
+        document.getElementById('logout-link').addEventListener('click', function(event) {
+            event.preventDefault();
+            sessionStorage.removeItem('loggedIn');
+            localStorage.removeItem('username');
+            window.location.href = 'login.html';
+        });
+
+        var customBudget = {
+            needs: 0,
+            wants: 0,
+            savings: 0
+        };
+
+        function calculateBudget() {
+            var income = parseFloat(document.getElementById('income').value);
+            var expenses = parseFloat(document.getElementById('expenses').value);
+            var result = income - expenses;
+            document.getElementById('result').innerHTML = `Your remaining budget is: $${result.toFixed(2)}`;
+
+            // Update chart with default 50/30/20 and custom budget
+            updateChart();
+        }
+
+        function addCustomEntry() {
+            var category = document.getElementById('category').value;
+            var amount = parseFloat(document.getElementById('amount').value);
+
+            if (amount > 0) {
+                customBudget[category] += amount;
+                displayCustomBudgetHistory();
+                updateChart();
+            }
+        }
+
+        function displayCustomBudgetHistory() {
+            var historyDiv = document.getElementById('customBudgetHistory');
+            historyDiv.innerHTML = `
+                <p>Needs: $${customBudget.needs.toFixed(2)}</p>
+                <p>Wants: $${customBudget.wants.toFixed(2)}</p>
+                <p>Savings: $${customBudget.savings.toFixed(2)}</p>
+            `;
+        }
+
+        function updateChart() {
+            var ctx = document.getElementById('budgetChart').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Needs', 'Wants', 'Savings'],
+                    datasets: [{
+                        label: '50/30/20 Budget',
+                        data: [50, 30, 20],
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Your Budget',
+                        data: [
+                            customBudget.needs,
+                            customBudget.wants,
+                            customBudget.savings
+                        ],
+                        backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                        borderColor: 'rgba(153, 102, 255, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

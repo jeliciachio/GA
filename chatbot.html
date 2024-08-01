@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wagewise - Mental Health Chatbot</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="index.html">
+                    <img src="images/logo.png" alt="Wagewise Logo" style="height: 30px;">
+                    Wagewise
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="rewards.html">Rewards & Incentives</a></li>
+                        <li class="nav-item"><a class="nav-link" href="chatbot.html">Chatbot Support</a></li>
+                        <li class="nav-item"><a class="nav-link" href="payroll.html">Payroll Distribution</a></li>
+                        <li class="nav-item"><a class="nav-link" href="wellness.html">Financial Wellness Tools</a></li>
+                    </ul>
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item"><a class="nav-link" href="#" id="logout-link" style="display:none;"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                        <li class="nav-item" id="profile-item" style="display:none;">
+                            <a class="nav-link" href="profile.html" id="profile-link">
+                                <i class="fas fa-user-circle"></i> <span id="profile-name">Profile</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main class="container mt-4">
+        <h1>Chat with Our Support</h1>
+        <div id="chatbox">
+            <div id="chat-log">
+                <div class="bot-message">Hello! How can I assist you today? Please select an option from the dropdown below or type your message.</div>
+            </div>
+            <div id="chat-options">
+                <select id="chat-dropdown">
+                    <option value="" disabled selected>Select an option</option>
+                    <option value="support">Customer Support</option>
+                    <option value="faq">FAQ</option>
+                    <option value="feedback">Feedback</option>
+                </select>
+                <button id="dropdown-submit">Submit</button>
+            </div>
+            <textarea id="chat-input" placeholder="Type your message..."></textarea>
+            <button id="send-button">Send</button>
+        </div>
+        <div id="counseling-section" style="display:none;">
+            <h2>Personalized Mental Health Support</h2>
+            <label for="mood-rating">How do you feel today (1-10)?</label>
+            <input type="number" id="mood-rating" min="1" max="10">
+            <button id="submit-rating">Submit</button>
+            <div id="counseling-link" style="display:none;">
+                <a href="#" id="counseling-url" target="_blank">Connect to Personal Counseling Service</a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-dark text-white text-center py-3">
+        <p>&copy; 2024 Wagewise. All rights reserved.</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const isLoggedIn = sessionStorage.getItem('loggedIn') === 'true';
+            const profileItem = document.getElementById('profile-item');
+            const profileName = document.getElementById('profile-name');
+            const logoutLink = document.getElementById('logout-link');
+
+            if (isLoggedIn) {
+                const username = localStorage.getItem('username');
+                profileItem.style.display = 'inline';
+                profileName.textContent = username || 'Profile';
+                logoutLink.style.display = 'inline';
+            } else {
+                profileItem.style.display = 'none';
+                logoutLink.style.display = 'none';
+            }
+        });
+
+        document.getElementById('logout-link').addEventListener('click', function(event) {
+            event.preventDefault();
+            sessionStorage.removeItem('loggedIn');
+            localStorage.removeItem('username');
+            window.location.href = 'login.html';
+        });
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatLog = document.getElementById('chat-log');
+            const chatInput = document.getElementById('chat-input');
+            const sendButton = document.getElementById('send-button');
+            const chatDropdown = document.getElementById('chat-dropdown');
+            const dropdownSubmit = document.getElementById('dropdown-submit');
+            const counselingSection = document.getElementById('counseling-section');
+            const submitRatingButton = document.getElementById('submit-rating');
+            const moodRating = document.getElementById('mood-rating');
+            const counselingLink = document.getElementById('counseling-link');
+            const counselingUrl = document.getElementById('counseling-url');
+            const profileItem = document.getElementById('profile-item');
+            const logoutItem = document.getElementById('logout-item');
+            const logoutLink = document.getElementById('logout-link');
+        
+            // Display introductory message
+            chatLog.innerHTML += `<div class="bot-message"></div>`;
+        
+            // Check if user is logged in
+            const isLoggedIn = sessionStorage.getItem('loggedIn') === 'true';
+            if (isLoggedIn) {
+                profileItem.style.display = 'inline';
+                logoutItem.style.display = 'inline';
+            }
+        
+            sendButton.addEventListener('click', function() {
+                const message = chatInput.value.trim();
+                if (message) {
+                    chatLog.innerHTML += `<div class="user-message">${message}</div>`;
+                    chatInput.value = '';
+        
+                    // Simulate bot response
+                    chatLog.innerHTML += `<div class="bot-message">Thank you for your message. How can I assist you further?</div>`;
+                }
+            });
+        
+            dropdownSubmit.addEventListener('click', function() {
+                const selectedOption = chatDropdown.value;
+                if (selectedOption) {
+                    chatLog.innerHTML += `<div class="user-message">Selected: ${selectedOption}</div>`;
+                    chatLog.innerHTML += `<div class="bot-message">You selected: ${selectedOption}. How can we help with this?</div>`;
+                    chatDropdown.value = '';
+        
+                    // Show counseling section if "Feedback" is selected
+                    if (selectedOption === 'feedback') {
+                        counselingSection.style.display = 'block';
+                    }
+                }
+            });
+        
+            submitRatingButton.addEventListener('click', function() {
+                const rating = moodRating.value.trim();
+                if (rating) {
+                    chatLog.innerHTML += `<div class="user-message">Feeling: ${rating}</div>`;
+                    chatLog.innerHTML += `<div class="bot-message">Thank you for sharing how you feel. We will connect you to a personal counseling service.</div>`;
+        
+                    // Show counseling link
+                    counselingLink.style.display = 'block';
+                    counselingUrl.href = 'https://example-counseling-service.com'; // Replace with actual link
+                }
+            });
+        
+            logoutLink.addEventListener('click', function(event) {
+                event.preventDefault();
+                sessionStorage.removeItem('loggedIn');
+                window.location.href = 'login.html';
+            });
+        });
+        
+    </script>
+</body>
+</html>

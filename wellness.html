@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Wellness Tools</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<style>
+    footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+    }
+</style> 
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="index.html">
+                    <img src="images/logo.png" alt="Wagewise Logo" style="height: 30px;">
+                    Wagewise
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="rewards.html">Rewards & Incentives</a></li>
+                        <li class="nav-item"><a class="nav-link" href="chatbot.html">Chatbot Support</a></li>
+                        <li class="nav-item"><a class="nav-link" href="payroll.html">Payroll Distribution</a></li>
+                        <li class="nav-item"><a class="nav-link" href="wellness.html">Financial Wellness Tools</a></li>
+                    </ul>
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item"><a class="nav-link" href="#" id="logout-link" style="display:none;"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                        <li class="nav-item" id="profile-item" style="display:none;">
+                            <a class="nav-link" href="profile.html" id="profile-link">
+                                <i class="fas fa-user-circle"></i> <span id="profile-name">Profile</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main class="container mt-4">
+        <h1>Financial Wellness Tools</h1>
+        <p>Explore our resources to enhance your financial wellness.</p>
+
+        <!-- Resources Section with Toggle Menu -->
+        <div class="card">
+        <div class="accordion" id="resourcesAccordion">
+            <!-- Resource 1 -->
+            <div class="card">
+                <div class="card-header" id="headingTwo">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            Resource 1: Budgeting Tools
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#resourcesAccordion">
+                    <div class="card-body">
+                    <h3>Budgeting Tools</h3>
+                    <p>Discover a variety of tools designed to help you manage your finances more effectively. From apps to spreadsheets, find the perfect solution for your budgeting needs.</p>
+                    <img src="images/budget.jpg" alt="Budgeting Tools" class="img-fluid">                    
+                    <h5>Recommended Tools</h5>
+                    <ul>
+                        <li><a href="https://www.mint.com" target="_blank">Mint: Budget Tracker & Planner</a></li>
+                        <li><a href="https://www.youneedabudget.com" target="_blank">You Need A Budget (YNAB)</a></li>
+                        <li>Google Sheets Budget Templates - Search for templates within Google Sheets</li>
+                    </ul>
+                    
+                    <h5>Budgeting Tips</h5>
+                    <p>Start by tracking your expenses for a month to understand where your money goes. Set realistic budgeting goals and review your budget regularly to adjust as needed.</p>
+                    
+                    <h5>Interactive Budget Calculator</h5>
+                    <p>Use our <a href="budgetcalculator.html">interactive budget calculator</a> to get a personalized budgeting plan based on your income and expenses.</p>
+                </div>
+            </div>
+            <!-- Resource 2 -->
+            <div class="card">
+                <div class="card-header" id="headingTwo">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            Resource 2: Financial Health Monitoring
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#resourcesAccordion">
+                    <div class="card-body">
+                    <h3>Financial Health Monitoring</h3>
+                        <p>Keep track of your financial health with our comprehensive monitoring tools. Get insights into your spending, savings, and investments.</p>
+                        <a href="financialdashboard.html" class="btn btn-success">Go to Dashboard</a>
+                        <img src="images/financialcheck.jpg" alt="Financial Health Monitoring" class="img-fluid">      
+                    </div>
+                </section>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+    <script>
+        document.getElementById('logout-link').style.display = 'inline';
+        document.getElementById('profile-item').style.display = 'inline';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const isLoggedIn = sessionStorage.getItem('loggedIn') === 'true';
+            const profileItem = document.getElementById('profile-item');
+            const profileName = document.getElementById('profile-name');
+            const logoutLink = document.getElementById('logout-link');
+
+            if (isLoggedIn) {
+                const username = localStorage.getItem('username');
+                profileItem.style.display = 'inline';
+                profileName.textContent = username || 'Profile';
+                logoutLink.style.display = 'inline';
+            } else {
+                profileItem.style.display = 'none';
+                logoutLink.style.display = 'none';
+            }
+        });
+        document.getElementById('logout-link').addEventListener('click', function(event) {
+            event.preventDefault();
+            sessionStorage.removeItem('loggedIn');
+            localStorage.removeItem('username');
+            window.location.href = 'login.html';
+        });
+    </script>
+</body>
+<footer class="bg-dark text-white text-center py-3">
+    <p>&copy; 2024 Wagewise. All rights reserved.</p>
+</footer>
+</html>

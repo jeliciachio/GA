@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Health Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<style>
+    footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+    }
+</style>
+<header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <img src="images/logo.png" alt="Wagewise Logo" style="height: 30px;">
+                Wagewise
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="rewards.html">Rewards & Incentives</a></li>
+                    <li class="nav-item"><a class="nav-link" href="chatbot.html">Chatbot Support</a></li>
+                    <li class="nav-item"><a class="nav-link" href="payroll.html">Payroll Distribution</a></li>
+                    <li class="nav-item"><a class="nav-link" href="wellness.html">Financial Wellness Tools</a></li>
+                </ul>
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item"><a class="nav-link" href="#" id="logout-link" style="display:none;"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                    <li class="nav-item" id="profile-item" style="display:none;">
+                        <a class="nav-link" href="profile.html" id="profile-link">
+                            <i class="fas fa-user-circle"></i> <span id="profile-name">Profile</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header> 
+<body>
+    <header class="bg-dark text-white text-center py-3">
+        <h1>Financial Health Dashboard</h1>
+    </header>
+    <main class="container mt-4">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Spending Overview</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="spendingChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Savings Overview</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="savingsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Investment Overview</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="investmentChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Budget Calculator</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="budgetForm">
+                            <div class="form-group">
+                                <label for="income">Monthly Income</label>
+                                <input type="number" class="form-control" id="income" placeholder="Enter your monthly income">
+                            </div>
+                            <div class="form-group">
+                                <label for="expenses">Monthly Expenses</label>
+                                <input type="number" class="form-control" id="expenses" placeholder="Enter your monthly expenses">
+                            </div>
+                            <button type="button" class="btn btn-primary" onclick="calculateBudget()">Calculate</button>
+                            <a href="wellness.html" class="btn btn-primary">Back to Wellness</a>
+                        </form>
+                        <div class="mt-3">
+                            <h5>Remaining Budget: <span id="remainingBudget">$0</span></h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal -->
+    <div class="modal fade" id="dataModal" tabindex="-1" aria-labelledby="dataModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="dataModalLabel">Update Spending Data</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="dataForm">
+                        <div class="form-group">
+                            <label for="rent">Rent</label>
+                            <input type="number" class="form-control" id="rent" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="groceries">Groceries</label>
+                            <input type="number" class="form-control" id="groceries" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="utilities">Utilities</label>
+                            <input type="number" class="form-control" id="utilities" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="entertainment">Entertainment</label>
+                            <input type="number" class="form-control" id="entertainment" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="others">Others</label>
+                            <input type="number" class="form-control" id="others" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var ctxSpending = document.getElementById('spendingChart').getContext('2d');
+            var spendingChart = new Chart(ctxSpending, {
+                type: 'pie',
+                data: {
+                    labels: ['Rent', 'Groceries', 'Utilities', 'Entertainment', 'Others'],
+                    datasets: [{
+                        data: [500, 300, 100, 150, 50],
+                        backgroundColor: ['#ff6384', '#36a2eb', '#ffce56', '#4bc0c0', '#9966ff']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    title: {
+                        display: true,
+                        text: 'Monthly Spending'
+                    }
+                }
+            });
+            // Remove the extra closing brackets
+            
+            document.getElementById('dataForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+        
+            var rent = document.getElementById('rent').value;
+            var groceries = document.getElementById('groceries').value;
+            var utilities = document.getElementById('utilities').value;
+            var entertainment = document.getElementById('entertainment').value;
+            var others = document.getElementById('others').value;
+        
+            spendingChart.data.datasets[0].data = [rent, groceries, utilities, entertainment, others];
+            spendingChart.update();
+        
+            $('#dataModal').modal('hide');
+        });
+   
+            
+                window.updateSpendingChart = function () {
+                    var selectedMonth = document.getElementById('spendingMonth').value;
+                    var selectedCategory = document.getElementById('spendingCategory').value;
+            
+                    var data = spendingData[selectedMonth];
+                    if (selectedCategory !== 'All') {
+                        data = { [selectedCategory]: data[selectedCategory] };
+                    }
+            
+                    spendingChart.data.labels = Object.keys(data);
+                    spendingChart.data.datasets[0].data = Object.values(data);
+                    spendingChart.update();
+                };
+        });
+        
+            // Savings Chart
+            var ctxSavings = document.getElementById('savingsChart').getContext('2d');
+            var savingsChart = new Chart(ctxSavings, {
+                type: 'bar',
+                data: {
+                    labels: ['January', 'February', 'March', 'April', 'May'],
+                    datasets: [{
+                        label: 'Savings',
+                        data: [200, 300, 250, 400, 350],
+                        backgroundColor: '#36a2eb'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    title: {
+                        display: true,
+                        text: 'Monthly Savings'
+                    }
+                }
+            });
+        
+            // Investment Chart
+            var ctxInvestment = document.getElementById('investmentChart').getContext('2d');
+            var investmentChart = new Chart(ctxInvestment, {
+                type: 'line',
+                data: {
+                    labels: ['January', 'February', 'March', 'April', 'May'],
+                    datasets: [{
+                        label: 'Investments',
+                        data: [1000, 1200, 1100, 1300, 1250],
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    title: {
+                        display: true,
+                        text: 'Monthly Investments'
+                    }
+                }
+            });
+
+        
+        function calculateBudget() {
+            var income = parseFloat(document.getElementById('income').value);
+            var expenses = parseFloat(document.getElementById('expenses').value);
+            var remainingBudget = income - expenses;
+            document.getElementById('remainingBudget').textContent = '$' + remainingBudget.toFixed(2);
+        }
+    </script>
+</body>
+<footer class="bg-dark text-white text-center py-3">
+    <p>&copy; 2024 Wagewise. All rights reserved.</p>
+</footer>
+</html>

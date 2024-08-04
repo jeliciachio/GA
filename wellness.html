@@ -14,6 +14,9 @@
         left: 0;
         width: 100%;
     }
+    h2 {
+        font-family: Georgia, serif;
+    }
 </style> 
 <body>
     <header>
@@ -32,6 +35,7 @@
                         <li class="nav-item"><a class="nav-link" href="rewards.html">Rewards & Incentives</a></li>
                         <li class="nav-item"><a class="nav-link" href="chatbot.html">Chatbot Support</a></li>
                         <li class="nav-item"><a class="nav-link" href="payroll.html">Payroll Distribution</a></li>
+                        <li class="nav-item"><a class="nav-link" href="transferhistory.html">Transfer History</a></li>
                         <li class="nav-item"><a class="nav-link" href="wellness.html">Financial Wellness Tools</a></li>
                     </ul>
                     <ul class="navbar-nav ml-auto">
@@ -47,7 +51,7 @@
         </nav>
     </header>
     <main class="container mt-4">
-        <h1>Financial Wellness Tools</h1>
+        <h2>Financial Wellness Tools</h2>
         <p>Explore our resources to enhance your financial wellness.</p>
 
         <!-- Resources Section with Toggle Menu -->
@@ -69,7 +73,7 @@
                     <img src="images/budget.jpg" alt="Budgeting Tools" class="img-fluid">                    
                     <h5>Recommended Tools</h5>
                     <ul>
-                        <li><a href="https://www.mint.com" target="_blank">Mint: Budget Tracker & Planner</a></li>
+                        <li><a href="https://seedly.sg/" target="_blank">Seedly: A Comprehensive Financial Assistant</a></li>
                         <li><a href="https://www.youneedabudget.com" target="_blank">You Need A Budget (YNAB)</a></li>
                         <li>Google Sheets Budget Templates - Search for templates within Google Sheets</li>
                     </ul>
@@ -101,7 +105,39 @@
                 </div>
             </div>
         </div>
+        <!-- Resource 3 -->
+        <div class="card">
+            <div class="card-header" id="headingThree">
+                <h5 class="mb-0">
+                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                        Resource 3: Investment Tools for Beginners
+                    </button>
+                </h5>
+            </div>
+            <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#resourcesAccordion">
+                <div class="card-body">
+                    <h3>Investment Tools for Beginners</h3>
+                    <p>Get started with investing using these beginner-friendly tools. Learn about different investment options and find the best apps to help you on your investment journey.</p>
+                    
+                    <h5>Recommended Investment Apps</h5>
+                    <ul>
+                        <li><a href="https://www.webull.com.sg/options?source=sgglsearch-welcome-signup&gad_source=1&gclid=Cj0KCQjwzby1BhCQARIsAJ_0t5NKlaxYHnasUKtnIm10WEnhbz-1Kh03v5Jt5w0kK6UoNPfWCKnfT5MaAruDEALw_wcB" target="_blank">WeBull is our most recommended stock broker for residents of Singapore.</a></li>
+                        <p>Provides commission-free trading with advanced tools and research for experienced traders.</p>
+                        <li><a href="https://www.syfe.com/brokerage?utm_source=google&utm_medium=cpc&utm_campaign=GGSE_SG_AT_PR_BR_BRAND&gclid=Cj0KCQjwzby1BhCQARIsAJ_0t5PaGkZmmMkIUYisn797PN8LyZlyNhGbF_x2SKYbvj4VEqhcNhJldOYaAgJ4EALw_wcB" target="_blank">Syfe Brokerage: Trade Stocks, ETFs and REITs</a></li>
+                        <p>Offers automated and customizable investment portfolios with goal-based investing and no minimum deposit.</p>
+                        <li><a href="https://www.stash.com" target="_blank">Stash: Simple and Affordable Investment Options</a></li>
+                        <p>Features fractional shares, themed investment plans, and educational resources for beginners and casual investors.</p>
+                    </ul>
+                    
+                    <h5>Investment Tips</h5>
+                    <p>Investing can be a powerful tool for building wealth, but it's important to do your research and understand the risks involved. Start small, diversify your investments, and seek advice from financial professionals if needed.</p>
+                    
+                    <p>Remember, investing is not compulsory for everyone. It's important to assess your own financial situation and goals before deciding if and how to invest.</p>
+                </div>
+            </div>
+        </div>
     </main>
+</body>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -133,8 +169,4 @@
             window.location.href = 'login.html';
         });
     </script>
-</body>
-<footer class="bg-dark text-white text-center py-3">
-    <p>&copy; 2024 Wagewise. All rights reserved.</p>
-</footer>
 </html>

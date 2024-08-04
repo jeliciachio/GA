@@ -3,22 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payroll and Wallet Management</title>
+    <title>Payroll - Wagewise</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
     <style>
-        .wallet-balance {
-            margin-top: 20px;
-        }
-        .transfer-history {
-            margin-top: 20px;
-        }
         footer {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
         }
+        h2 {
+            font-family: Georgia, serif;
+        }
     </style>
+    
 </head>
 <body>
     <header>
@@ -37,157 +36,88 @@
                         <li class="nav-item"><a class="nav-link" href="rewards.html">Rewards & Incentives</a></li>
                         <li class="nav-item"><a class="nav-link" href="chatbot.html">Chatbot Support</a></li>
                         <li class="nav-item"><a class="nav-link" href="payroll.html">Payroll Distribution</a></li>
+                        <li class="nav-item"><a class="nav-link" href="transferhistory.html">Transfer History</a></li>
                         <li class="nav-item"><a class="nav-link" href="wellness.html">Financial Wellness Tools</a></li>
                     </ul>
                     <ul class="navbar-nav ml-auto">
-                        <li class="nav-item"><a class="nav-link" href="#" id="logout-link" style="display:none;"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-                        <li class="nav-item" id="profile-item" style="display:none;">
-                            <a class="nav-link" href="profile.html" id="profile-link">
-                                <i class="fas fa-user-circle"></i> <span id="profile-name">Profile</span>
-                            </a>
-                        </li>
+                        <li class="nav-item"><a class="nav-link" href="profile.html" id="profile-link"><i class="fas fa-user-circle"></i> Profile</a></li>
+                        <li class="nav-item"><a class="nav-link" href="logout.html" id="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <!-- Wallet Balance Display -->
-        <div id="wallet-balance-display" class="wallet-balance">
-            <h3>Wallet Balance: <span id="wallet-balance-amount">$0.00</span></h3>
-            <button id="update-wallet-from-payroll" class="btn btn-primary">Update Wallet from Payroll</button>
-            <!-- Payroll Transfer Form -->
-            <form id="payroll-transfer-form" class="mt-3">
-                <div class="form-group">
-                    <label for="transfer-category">Transfer Category:</label>
-                    <select id="transfer-category" class="form-control" required>
-                        <option value="Financial">Financial Purposes</option>
-                        <option value="Bills">Bills</option>
-                        <option value="Update">Update Wallet from Payroll</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="payroll-recipient">Recipient:</label>
-                    <input type="text" id="payroll-recipient" name="payroll-recipient" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="payroll-amount">Amount:</label>
-                    <input type="number" id="payroll-amount" name="payroll-amount" class="form-control" required>
-                <button type="submit" class="btn btn-success">Transfer from Payroll</button>
-            </form>
+    <main class="container mt-4">
+        <h2>Payroll</h2>
+        <div class="form-group">
+            <label for="current-payroll">Current Payroll Amount:</label>
+            <input type="text" id="current-payroll" class="form-control" readonly>
         </div>
-
-        <!-- Transfer History Display -->
-        <div class="transfer-history mt-5">
-            <h4>Transfer History</h4>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Category</th>
-                        <th>Amount</th>
-                        <th>Recipient</th>
-                    </tr>
-                </thead>
-                <tbody id="transfer-history-table-body">
-                    <!-- Transfer history entries will be appended here -->
-                </tbody>
-            </table>
-        </div>
-    </div>
-
+        <form id="payroll-transfer-form">
+            <div class="form-group">
+                <label for="transfer-category">Transfer Category:</label>
+                <select id="transfer-category" class="form-control" required>
+                    <option value="Financial">Financial Purposes</option>
+                    <option value="Bills">Bills</option>
+                    <option value="Investment">Investment</option>
+                    <option value="Others">Others</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="payroll-recipient">Recipient:</label>
+                <input type="text" id="payroll-recipient" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="payroll-amount">Amount:</label>
+                <input type="number" id="payroll-amount" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="transfer-comments">Comments:</label>
+                <textarea id="transfer-comments" class="form-control"></textarea>
+            </div>
+            <button type="submit" class="btn btn-success">Transfer</button>
+        </form>
+    </main>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        // Example JavaScript to show the logout and profile links when a user logs in
-        document.getElementById('logout-link').style.display = 'inline';
-        document.getElementById('profile-item').style.display = 'inline';
-
         document.addEventListener('DOMContentLoaded', function() {
-            const isLoggedIn = sessionStorage.getItem('loggedIn') === 'true';
-            const profileItem = document.getElementById('profile-item');
-            const profileName = document.getElementById('profile-name');
-            const logoutLink = document.getElementById('logout-link');
-        
-            if (isLoggedIn) {
-                const username = localStorage.getItem('username');
-                profileItem.style.display = 'inline';
-                profileName.textContent = username || 'Profile';
-                logoutLink.style.display = 'inline';
-            } else {
-                profileItem.style.display = 'none';
-                logoutLink.style.display = 'none';
-            }
-        });
-        document.getElementById('logout-link').addEventListener('click', function(event) {
-            event.preventDefault();
-            sessionStorage.removeItem('loggedIn');
-            localStorage.removeItem('username');
-            window.location.href = 'login.html';
-            
-        });
+            const profile = JSON.parse(localStorage.getItem('profile')) || {};
+            document.getElementById('current-payroll').value = profile.salary || '$0.00';
 
-        $(document).ready(function() {
-            var transferHistory = [];
+            document.getElementById('payroll-transfer-form').addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                const category = document.getElementById('transfer-category').value;
+                const recipient = document.getElementById('payroll-recipient').value;
+                const amount = parseFloat(document.getElementById('payroll-amount').value);
+                const comments = document.getElementById('transfer-comments').value;
 
-            $('#payroll-transfer-form').on('submit', function(e) {
-                e.preventDefault(); // Prevent the default form submission
+                // Update payroll amount
+                let currentPayroll = parseFloat(document.getElementById('current-payroll').value.replace('$', ''));
+                currentPayroll -= amount;
 
-                var transferCategory = $('#transfer-category').val();
-                var transferAmount = parseFloat($('#payroll-amount').val());
-                var walletBalance = parseFloat($('#wallet-balance-amount').text().replace('$', ''));
+                // Update localStorage with new payroll amount
+                profile.salary = currentPayroll.toFixed(2);
+                localStorage.setItem('profile', JSON.stringify(profile));
 
-                if (transferCategory === "Update") {
-                    walletBalance += transferAmount;
-                } else {
-                    if (transferAmount > walletBalance) {
-                        alert('Insufficient wallet balance.');
-                        return;
-                    }
-                    walletBalance -= transferAmount;
-                }
-
-                $('#wallet-balance-amount').text(`$${walletBalance.toFixed(2)}`);
-
-                var transferDetails = {
-                    category: transferCategory,
-                    amount: transferAmount,
-                    timestamp: new Date().toLocaleString(),
-                    recipient: transferCategory === "Update" ? "Wallet" : "External"
-                };
-
-                transferHistory.push(transferDetails);
-                updateTransferHistoryDisplay();
-
-                $('#payroll-amount').val('');
-            });
-
-            function updateTransferHistoryDisplay() {
-                var historyTableBody = $('#transfer-history-table-body');
-                historyTableBody.empty();
-
-                transferHistory.forEach(function(details) {
-                    var row = `<tr>
-                        <td>${details.timestamp}</td>
-                        <td>${details.category}</td>
-                        <td>$${details.amount.toFixed(2)}</td>
-                        <td>${details.recipient}</td>
-                    </tr>`;
-                    historyTableBody.append(row);
+                // Save transfer details to localStorage
+                let transferHistory = JSON.parse(localStorage.getItem('transferHistory')) || [];
+                transferHistory.push({
+                    date: new Date().toLocaleString(),
+                    category: category,
+                    amount: amount.toFixed(2),
+                    recipient: recipient,
+                    comments: comments
                 });
-            }
+                localStorage.setItem('transferHistory', JSON.stringify(transferHistory));
 
-            $('#update-wallet-from-payroll').on('click', function() {
-                var payrollAmount = parseFloat(prompt('Enter the payroll amount to transfer to your wallet:'));
-                updateWalletBalance(payrollAmount);
+                alert(`Transferred $${amount.toFixed(2)} for ${category} to ${recipient}. Comments: ${comments}`);
+                
+                // Update UI
+                document.getElementById('current-payroll').value = profile.salary;
             });
-
-            function updateWalletBalance(amount) {
-                var walletBalance = parseFloat($('#wallet-balance-amount').text().replace('$', ''));
-                walletBalance += amount;
-                $('#wallet-balance-amount').text(`$${walletBalance.toFixed(2)}`);
-            }
         });
     </script>
 </body>

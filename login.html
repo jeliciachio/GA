@@ -7,6 +7,14 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
+<style>
+    footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+    }
+</style> 
 <body>
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -39,10 +47,36 @@
             </div>
             <button type="submit" class="btn btn-primary">Login</button>
         </form>
+        
+        <!-- OTP Display Section -->
+        <div id="otp-display" style="display: none;">
+            <h3>Your OTP: <span id="otp-code"></span></h3>
+        </div>
     </main>
-    <footer class="bg-dark text-white text-center py-3">
-        <p>&copy; 2024 Wagewise. All rights reserved.</p>
-    </footer>
+    
+    <!-- OTP Modal -->
+    <div class="modal fade" id="otpModal" tabindex="-1" role="dialog" aria-labelledby="otpModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="otpModalLabel">Enter OTP</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="otp-form">
+                        <div class="form-group">
+                            <label for="otp">OTP</label>
+                            <input type="text" class="form-control" id="otp" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit OTP</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -55,12 +89,52 @@
             const storedPassword = localStorage.getItem('password');
 
             if (username === storedUsername && password === storedPassword) {
-                sessionStorage.setItem('loggedIn', 'true');
-                window.location.href = 'profile.html'; // Redirect to profile page on successful login
+                // Generate OTP and timestamp
+                const otp = Math.floor(100000 + Math.random() * 900000); // 6-digit OTP
+                const timestamp = new Date().getTime(); // Current timestamp
+                const expiryTime = 5 * 60 * 1000; // OTP valid for 5 minutes (in milliseconds)
+                
+                // Store OTP and timestamp in localStorage
+                localStorage.setItem('otp', otp); // Store OTP
+                localStorage.setItem('otpTimestamp', timestamp); // Store timestamp
+                localStorage.setItem('otpExpiry', expiryTime); // Store expiry time
+                
+                // Display OTP
+                document.getElementById('otp-display').style.display = 'block';
+                document.getElementById('otp-code').innerText = otp;
+                
+                // Show OTP modal
+                $('#otpModal').modal('show');
             } else {
                 alert('Invalid username or password!');
             }
         });
+
+        document.getElementById('otp-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const enteredOtp = document.getElementById('otp').value;
+            const storedOtp = localStorage.getItem('otp');
+            const otpTimestamp = localStorage.getItem('otpTimestamp');
+            const otpExpiry = localStorage.getItem('otpExpiry');
+            
+            const currentTime = new Date().getTime();
+            const timeElapsed = currentTime - otpTimestamp;
+
+            if (enteredOtp === storedOtp && timeElapsed <= otpExpiry) {
+                sessionStorage.setItem('loggedIn', 'true');
+                localStorage.removeItem('otp'); // Clear OTP after successful login
+                localStorage.removeItem('otpTimestamp'); // Clear timestamp
+                localStorage.removeItem('otpExpiry'); // Clear expiry time
+                window.location.href = 'profile.html'; // Redirect to profile page on successful login
+            } else if (timeElapsed > otpExpiry) {
+                alert('OTP has expired!');
+            } else {
+                alert('Invalid OTP!');
+            }
+        });
     </script>
+    <footer class="bg-dark text-white text-center py-3">
+        <p>&copy; 2024 Wagewise. All rights reserved.</p>
+    </footer>
 </body>
 </html>

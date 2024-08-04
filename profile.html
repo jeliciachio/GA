@@ -32,6 +32,7 @@
                         <li class="nav-item"><a class="nav-link" href="rewards.html">Rewards & Incentives</a></li>
                         <li class="nav-item"><a class="nav-link" href="chatbot.html">Chatbot Support</a></li>
                         <li class="nav-item"><a class="nav-link" href="payroll.html">Payroll Distribution</a></li>
+                        <li class="nav-item"><a class="nav-link" href="transferhistory.html">Transfer History</a></li>
                         <li class="nav-item"><a class="nav-link" href="wellness.html">Financial Wellness Tools</a></li>
                     </ul>
                     <ul class="navbar-nav ml-auto">
@@ -69,14 +70,13 @@
                 <label for="salary">Salary</label>
                 <input type="text" class="form-control" id="salary" required>
             </div>
-            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="submit" id="save-button" class="btn btn-success hidden">Save Changes</button>
         </form>
     </main>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        // Ensure the profile link and logout link are shown if the user is logged in
         document.addEventListener('DOMContentLoaded', function() {
             const isLoggedIn = sessionStorage.getItem('loggedIn') === 'true';
             const profileLink = document.getElementById('profile-link');
@@ -85,71 +85,86 @@
             if (isLoggedIn) {
                 profileLink.style.display = 'inline';
                 logoutLink.style.display = 'inline';
-                loadProfileData(); // Load the profile data when the page loads
+                loadProfile(); // Load the profile data when the page loads
             } else {
                 profileLink.style.display = 'none';
                 logoutLink.style.display = 'none';
             }
         });
 
-        // Logout event handler
         document.getElementById('logout-link').addEventListener('click', function(event) {
             event.preventDefault();
             sessionStorage.removeItem('loggedIn');
-            localStorage.removeItem('username');
+            localStorage.removeItem('profile');
             window.location.href = 'login.html';
         });
 
-        // Form submission event handler
         document.getElementById('profile-form').addEventListener('submit', function(event) {
             event.preventDefault();
-            const formData = new FormData(event.target);
-
-            fetch('/save-profile', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Profile saved successfully!');
-                    updateProfileForm(data.profile);
-                } else {
-                    alert('Error saving profile.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error saving profile.');
-            });
+            saveProfile();
         });
 
-        // Function to load profile data
-        function loadProfileData() {
-            fetch('/get-profile')
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    updateProfileForm(data.profile);
-                } else {
-                    alert('Error loading profile.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error loading profile.');
+        function loadProfile() {
+            const profile = JSON.parse(localStorage.getItem('profile')) || {};
+            document.getElementById('username').value = profile.username || '';
+            document.getElementById('name').value = profile.name || '';
+            document.getElementById('email').value = profile.email || '';
+            document.getElementById('birthday').value = profile.birthday || '';
+            document.getElementById('occupation').value = profile.occupation || '';
+            document.getElementById('salary').value = profile.salary || '';
+        }
+
+        function saveProfile() {
+            const profile = {
+                username: document.getElementById('username').value,
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                birthday: document.getElementById('birthday').value,
+                occupation: document.getElementById('occupation').value,
+                salary: document.getElementById('salary').value
+            };
+
+            localStorage.setItem('profile', JSON.stringify(profile));
+            alert('Profile saved successfully.');
+        }
+
+        function toggleEditMode(editMode) {
+            const inputs = document.querySelectorAll('#profile-form input');
+            const editButton = document.getElementById('edit-button');
+            const saveButton = document.getElementById('save-button');
+
+            inputs.forEach(input => {
+                input.readOnly = !editMode;
             });
+
+            editButton.classList.toggle('hidden', editMode);
+            saveButton.classList.toggle('hidden', !editMode);
+        }
+
+        // Function to fetch the profile data
+        function fetchProfile() {
+            fetch('/api/getProfile')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        updateProfileForm(data.profile);
+                    } else {
+                        alert('Error fetching profile: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error fetching profile. Please try again later.');
+                });
         }
 
         // Function to update the profile form fields
         function updateProfileForm(profile) {
-            document.getElementById('username').value = profile.username;
-            document.getElementById('name').value = profile.name;
-            document.getElementById('email').value = profile.email;
-            document.getElementById('birthday').value = profile.birthday;
-            document.getElementById('occupation').value = profile.occupation;
             document.getElementById('salary').value = profile.salary;
         }
+
+        // Fetch the profile data when the page loads
+        document.addEventListener('DOMContentLoaded', fetchProfile);
     </script>
 </body>
 <footer class="bg-dark text-white text-center py-3">

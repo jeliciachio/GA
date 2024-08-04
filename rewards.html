@@ -14,6 +14,9 @@
         left: 0;
         width: 100%;
     }
+    h2 {
+        font-family: Georgia, serif;
+    }
 </style> 
 <body>
     <header>
@@ -32,6 +35,7 @@
                         <li class="nav-item"><a class="nav-link" href="rewards.html">Rewards & Incentives</a></li>
                         <li class="nav-item"><a class="nav-link" href="chatbot.html">Chatbot Support</a></li>
                         <li class="nav-item"><a class="nav-link" href="payroll.html">Payroll Distribution</a></li>
+                        <li class="nav-item"><a class="nav-link" href="transferhistory.html">Transfer History</a></li>
                         <li class="nav-item"><a class="nav-link" href="wellness.html">Financial Wellness Tools</a></li>
                     </ul>
                     <ul class="navbar-nav ml-auto">
@@ -63,6 +67,13 @@
             <div id="qr-luckincoffee" class="qr-code"></div>
         </div>
         <div class="reward-item">
+            <h4>Wingstop 10% off voucher</h4>
+            <img src="images/wingstop.jpg" alt="Wing Stop" style="width:300px">
+            <p>Redeem with 200 points</p>
+            <button class="btn btn-primary redeem-btn" data-points="200">Redeem</button>
+            <div id="qr-Wing Stop" class="qr-code"></div>
+        </div>
+        <div class="reward-item">
             <h4>20% Discount Voucher from Grab</h4>
             <img src="images/grab.png" alt="Grab">
             <p>Redeem with 500 points</p>
@@ -73,7 +84,7 @@
             <h4>$20 Discount Voucher from Sephora</h4>
             <img src="images/sephora.jpg" alt="sephora" style="width:300px">
             <p>Redeem with 800 points</p>
-            <button class="btn btn-primary redeem-btn" data-points="500">Redeem</button>
+            <button class="btn btn-primary redeem-btn" data-points="800">Redeem</button>
             <!-- QR Code placeholder -->
             <div id="qr-sephora" class="qr-code"></div>
         </div>
@@ -81,11 +92,19 @@
             <h4>$50 CapitalLand Voucher</h4>
             <img src="images/capitaland.png" alt="capitaland" style="width:300px">
             <p>Redeem with 1,500 points</p>
-            <button class="btn btn-primary redeem-btn" data-points="500">Redeem</button>
+            <button class="btn btn-primary redeem-btn" data-points="1500">Redeem</button>
             <!-- QR Code placeholder -->
             <div id="qr-capitaland" class="qr-code"></div>
+        </div>
+        <div class="reward-item">
+            <h4>IKEA $50 Voucher for Furniture</h4>
+            <img src="images/ikea.jpg" alt="IKEA">
+            <p>Redeem with 3,000 points</p>
+            <button class="btn btn-primary redeem-btn" data-points="3000">Redeem</button>
+            <div id="qr-IKEA" class="qr-code"></div>
+        </div>
     </div>
-
+</body>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -136,6 +155,11 @@
                         const qrText = "Your Reward Code or URL"; // The text you want to encode
                         new QRCode(document.getElementById(rewardId), qrText);
                         
+                        // Set a timer to hide the QR code after 5 minutees
+                        setTimeout(() => {
+                            document.getElementById(rewardId).style.display = 'none';
+                        }, 300000); // 5 minutes in milliseconds
+
                         alert('Reward redeemed!');
                     } else {
                         // Show popup for insufficient points
@@ -145,7 +169,6 @@
             });
         });
     </script>
-</body>
 <footer class="bg-dark text-white text-center py-3">
     <p>&copy; 2024 Wagewise. All rights reserved.</p>
 </footer>

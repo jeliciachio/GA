@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transfer History - Wagewise</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+        }
+        h2 {
+            font-family: Georgia, serif;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="index.html">
+                    <img src="images/logo.png" alt="Wagewise Logo" style="height: 30px;">
+                    Wagewise
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="rewards.html">Rewards & Incentives</a></li>
+                        <li class="nav-item"><a class="nav-link" href="chatbot.html">Chatbot Support</a></li>
+                        <li class="nav-item"><a class="nav-link" href="payroll.html">Payroll Distribution</a></li>
+                        <li class="nav-item"><a class="nav-link" href="transferhistory.html">Transfer History</a></li>
+                        <li class="nav-item"><a class="nav-link" href="wellness.html">Financial Wellness Tools</a></li>
+                    </ul>
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item"><a class="nav-link" href="profile.html" id="profile-link"><i class="fas fa-user-circle"></i> Profile</a></li>
+                        <li class="nav-item"><a class="nav-link" href="logout.html" id="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main class="container mt-4">
+        <h2>Transfer History</h2>
+        <div class="form-group">
+            <label for="filter-date">Filter by Date:</label>
+            <input type="date" id="filter-date" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="filter-recipient">Filter by Recipient:</label>
+            <input type="text" id="filter-recipient" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="filter-month">Filter by Month:</label>
+            <select id="filter-month" class="form-control">
+                <option value="">All Months</option>
+                <!-- Add all months -->
+                <option value="January">January</option>
+                <option value="February">February</option>
+                <option value="March">March</option>
+                <option value="April">April</option>
+                <option value="May">May</option>
+                <option value="June">June</option>
+                <option value="July">July</option>
+                <option value="August">August</option>
+                <option value="September">September</option>
+                <option value="October">October</option>
+                <option value="November">November</option>
+                <option value="December">December</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <button id="apply-filters" class="btn btn-primary">Apply Filters</button>
+        </div>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Recipient</th>
+                    <th>Amount</th>
+                    <th>Comments</th>
+                </tr>
+            </thead>
+            <tbody id="history-table-body">
+                <!-- Transfer history rows will be inserted here -->
+            </tbody>
+        </table>
+    </main>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const historyTableBody = document.getElementById('history-table-body');
+            const filterDate = document.getElementById('filter-date');
+            const filterRecipient = document.getElementById('filter-recipient');
+            const filterMonth = document.getElementById('filter-month');
+
+            function renderHistory() {
+                const transferHistory = JSON.parse(localStorage.getItem('transferHistory')) || [];
+                const filteredHistory = transferHistory.filter(item => {
+                    const itemDate = new Date(item.date);
+                    const filterDateValue = filterDate.value ? new Date(filterDate.value) : null;
+                    const filterMonthValue = filterMonth.value;
+                    const filterRecipientValue = filterRecipient.value.toLowerCase();
+
+                    return (!filterDateValue || itemDate.toDateString() === filterDateValue.toDateString()) &&
+                           (!filterMonthValue || itemDate.toLocaleString('default', { month: 'long' }) === filterMonthValue) &&
+                           (filterRecipientValue === '' || item.recipient.toLowerCase().includes(filterRecipientValue));
+                });
+
+                historyTableBody.innerHTML = filteredHistory.map(item => `
+                    <tr>
+                        <td>${item.date}</td>
+                        <td>${item.category}</td>
+                        <td>${item.recipient}</td>
+                        <td>$${item.amount}</td>
+                        <td>${item.comments}</td>
+                    </tr>
+                `).join('');
+            }
+
+            document.getElementById('apply-filters').addEventListener('click', renderHistory);
+            renderHistory();
+        });
+    </script>
+</body>
+<footer class="bg-dark text-white text-center py-3">
+    <p>&copy; 2024 Wagewise. All rights reserved.</p>
+</footer>
+</html>

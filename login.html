@@ -80,59 +80,61 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
     <script>
-        document.getElementById('login-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            const storedUsername = localStorage.getItem('username');
-            const storedPassword = localStorage.getItem('password');
+    document.getElementById('login-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const storedUsername = localStorage.getItem('username');
+        const storedPassword = localStorage.getItem('password');
 
-            if (username === storedUsername && password === storedPassword) {
-                // Generate OTP and timestamp
-                const otp = Math.floor(100000 + Math.random() * 900000); // 6-digit OTP
-                const timestamp = new Date().getTime(); // Current timestamp
-                const expiryTime = 5 * 60 * 1000; // OTP valid for 5 minutes (in milliseconds)
-                
-                // Store OTP and timestamp in localStorage
-                localStorage.setItem('otp', otp); // Store OTP
-                localStorage.setItem('otpTimestamp', timestamp); // Store timestamp
-                localStorage.setItem('otpExpiry', expiryTime); // Store expiry time
-                
-                // Display OTP
-                document.getElementById('otp-display').style.display = 'block';
-                document.getElementById('otp-code').innerText = otp;
-                
-                // Show OTP modal
-                $('#otpModal').modal('show');
-            } else {
-                alert('Invalid username or password!');
-            }
-        });
+        if (username === storedUsername && password === storedPassword) {
+            const otp = Math.floor(100000 + Math.random() * 900000);
+            const timestamp = new Date().getTime();
+            const expiryTime = 5 * 60 * 1000;
 
-        document.getElementById('otp-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const enteredOtp = document.getElementById('otp').value;
-            const storedOtp = localStorage.getItem('otp');
-            const otpTimestamp = localStorage.getItem('otpTimestamp');
-            const otpExpiry = localStorage.getItem('otpExpiry');
-            
-            const currentTime = new Date().getTime();
-            const timeElapsed = currentTime - otpTimestamp;
+            localStorage.setItem('otp', otp);
+            localStorage.setItem('otpTimestamp', timestamp);
+            localStorage.setItem('otpExpiry', expiryTime);
 
-            if (enteredOtp === storedOtp && timeElapsed <= otpExpiry) {
-                sessionStorage.setItem('loggedIn', 'true');
-                localStorage.removeItem('otp'); // Clear OTP after successful login
-                localStorage.removeItem('otpTimestamp'); // Clear timestamp
-                localStorage.removeItem('otpExpiry'); // Clear expiry time
-                window.location.href = 'profile.html'; // Redirect to profile page on successful login
-            } else if (timeElapsed > otpExpiry) {
-                alert('OTP has expired!');
-            } else {
-                alert('Invalid OTP!');
-            }
-        });
-    </script>
+            document.getElementById('otp-display').style.display = 'block';
+            document.getElementById('otp-code').innerText = otp;
+
+            $('#otpModal').modal('show');
+        } else {
+            alert('Invalid username or password!');
+        }
+    });
+
+    document.getElementById('otp-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const enteredOtp = document.getElementById('otp').value;
+        const storedOtp = localStorage.getItem('otp');
+        const otpTimestamp = localStorage.getItem('otpTimestamp');
+        const otpExpiry = localStorage.getItem('otpExpiry');
+        
+        const currentTime = new Date().getTime();
+        const timeElapsed = currentTime - otpTimestamp;
+
+        if (enteredOtp === storedOtp && timeElapsed <= otpExpiry) {
+            // ✅ Set login status
+            localStorage.setItem("isLoggedIn", "true");
+
+            // ✅ Clear OTP data
+            localStorage.removeItem('otp');
+            localStorage.removeItem('otpTimestamp');
+            localStorage.removeItem('otpExpiry');
+
+            // ✅ Redirect to homepage
+            window.location.href = 'index.html';
+        } else if (timeElapsed > otpExpiry) {
+            alert('OTP has expired!');
+        } else {
+            alert('Invalid OTP!');
+        }
+    });
+</script>
     <footer class="bg-dark text-white text-center py-3">
         <p>&copy; 2024 Wagewise. All rights reserved.</p>
     </footer>

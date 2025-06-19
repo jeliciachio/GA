@@ -53,6 +53,15 @@
             <label for="current-payroll">Current Payroll Amount:</label>
             <input type="text" id="current-payroll" class="form-control" readonly>
         </div>
+        <div class="form-group mt-3">
+            <label for="update-payroll">Update Payroll Amount:</label>
+            <div class="input-group">
+                <input type="number" id="update-payroll" class="form-control" placeholder="Enter new payroll amount">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" id="update-payroll-btn">Update</button>
+                </div>
+            </div>
+        </div>
         <form id="payroll-transfer-form">
             <div class="form-group">
                 <label for="transfer-category">Transfer Category:</label>
@@ -82,41 +91,59 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const profile = JSON.parse(localStorage.getItem('profile')) || {};
-            document.getElementById('current-payroll').value = profile.salary || '$0.00';
+    // Simulated login check
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
+    if (!isLoggedIn || isLoggedIn !== "true") {
+        alert("You must log in to view this page.");
+        window.location.href = "login.html";
+    }
+    </script>
 
-            document.getElementById('payroll-transfer-form').addEventListener('submit', function(event) {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const profile = JSON.parse(localStorage.getItem('profile')) || {};
+            document.getElementById('current-payroll').value = `$${profile.salary || '0.00'}`;
+
+            // Form submission logic
+            document.getElementById('payroll-transfer-form').addEventListener('submit', function (event) {
                 event.preventDefault();
-                
+
                 const category = document.getElementById('transfer-category').value;
                 const recipient = document.getElementById('payroll-recipient').value;
                 const amount = parseFloat(document.getElementById('payroll-amount').value);
                 const comments = document.getElementById('transfer-comments').value;
 
-                // Update payroll amount
                 let currentPayroll = parseFloat(document.getElementById('current-payroll').value.replace('$', ''));
                 currentPayroll -= amount;
 
-                // Update localStorage with new payroll amount
                 profile.salary = currentPayroll.toFixed(2);
                 localStorage.setItem('profile', JSON.stringify(profile));
 
-                // Save transfer details to localStorage
                 let transferHistory = JSON.parse(localStorage.getItem('transferHistory')) || [];
                 transferHistory.push({
                     date: new Date().toLocaleString(),
-                    category: category,
+                    category,
                     amount: amount.toFixed(2),
-                    recipient: recipient,
-                    comments: comments
+                    recipient,
+                    comments
                 });
                 localStorage.setItem('transferHistory', JSON.stringify(transferHistory));
 
                 alert(`Transferred $${amount.toFixed(2)} for ${category} to ${recipient}. Comments: ${comments}`);
-                
-                // Update UI
-                document.getElementById('current-payroll').value = profile.salary;
+                document.getElementById('current-payroll').value = `$${profile.salary}`;
+            });
+
+            // Payroll update button logic
+            document.getElementById('update-payroll-btn').addEventListener('click', function () {
+                const newPayroll = parseFloat(document.getElementById('update-payroll').value);
+                if (!isNaN(newPayroll) && newPayroll >= 0) {
+                    profile.salary = newPayroll.toFixed(2);
+                    localStorage.setItem('profile', JSON.stringify(profile));
+                    document.getElementById('current-payroll').value = `$${newPayroll.toFixed(2)}`;
+                    alert(`Payroll amount updated to $${newPayroll.toFixed(2)}.`);
+                } else {
+                    alert('Please enter a valid payroll amount.');
+                }
             });
         });
     </script>
